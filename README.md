@@ -2,7 +2,6 @@
 The Weather App is a Java-based application designed to provide users with real-time weather information for multiple locations. It includes features such as adding locations using longitude and latitude or city/country names, displaying current weather conditions, showing basic information like "Feels like," minimum and maximum temperatures, sunrise and sunset times, weather forecast for 5 days, and more.
 
 ## Contributors
-- Wasee-Ur-Rehman Choudry
 - Hasan Yahya
 - Wasif Khan
 - Zain Aslam
