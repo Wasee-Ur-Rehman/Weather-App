@@ -1,0 +1,3 @@
+Storage\WeatherDataStorage.class
+Business\WeatherService.class
+UI\DesktopUI.class
