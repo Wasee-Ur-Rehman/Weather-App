@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import java.util.Scanner;
 import org.json.JSONArray;
 
+
 public class DesktopUI 
 {
     private WeatherService weatherService;
@@ -17,28 +18,25 @@ public class DesktopUI
         this.weatherService = weatherService;
     }
     
-    public void displayWeatherByCity(String cityName, String stateCode, String countryCode) {
+    public void displayWeatherByCity(String cityName, String stateCode, String countryCode)
+    {
     // Call the WeatherService method to fetch weather data by city
     String weatherData = weatherService.fetchWeatherDataByCity(cityName, stateCode, countryCode);
 
     // Display the fetched weather data
     System.out.println("Weather Information for " + cityName + ":");
-   
     System.out.println(weatherData);
 }
 
-public void displayWeatherByCoordinates(double latitude, double longitude) {
+    public void displayWeatherByCoordinates(double latitude, double longitude)
+    {
     // Call the WeatherService method to fetch weather data by coordinates
     String weatherData = weatherService.fetchWeatherDataByCoordinates(latitude, longitude);
 
     // Display the fetched weather data
     System.out.println("Weather Information for Latitude: " + latitude + ", Longitude: " + longitude + ":");
-    
     System.out.println(weatherData);
 }
-
-
-
 
     // Method to display basic weather information
     public void displayBasicInformation() {
@@ -55,13 +53,25 @@ public void displayWeatherByCoordinates(double latitude, double longitude) {
     }
 
     // Method to display feels-like temperature
-    public void displayFeelsLike() {
+    public void displayFeelsLike() 
+    {
         String feelsLike = weatherService.fetchFeelsLike();
         System.out.println("\nFeels Like Temperature:");
         System.out.println(feelsLike);
     }
     
-      public void displayPollutionData() {
+    public void getForecastData() 
+    {
+        String forecastData = weatherService.fetchFiveDayForecast();
+        System.out.println("Forecast Data:\n" + forecastData);
+    }
+    
+    public void fetchAndDisplayTimestamp() {
+        String timestamp = weatherService.fetchTimestamp();
+        System.out.println("Timestamp: " + timestamp);
+    }
+
+    public void displayPollutionData() {
         weatherService.getAirPollutionData();
         String pollutionData = weatherService.parsePollutionData();
 
@@ -104,6 +114,18 @@ public void displayWeatherByCoordinates(double latitude, double longitude) {
             System.out.println("Error parsing pollution data.");
         }
     }
+     
+    public void displayAirQualityInformation() 
+      {
+        weatherService.generateAirQualityNotification();
+        int aqi = weatherService.getAirQualityIndex();
+        String airQualityStatus = weatherService.getAirQualityStatus(aqi);
+        System.out.println("Air Quality Status: " + airQualityStatus);
+    }
+    public void displayBadWeather()
+    {
+        weatherService.getTempAndHum();
+    }
       
    public static void main(String[] args) 
    {
@@ -125,16 +147,15 @@ public void displayWeatherByCoordinates(double latitude, double longitude) {
         if (choice == 1) {
             // Fetch weather by city name
           System.out.println("Enter city name:");
-String cityName = scanner2.nextLine();
+          String cityName = scanner2.nextLine();
 // Prompt user to enter state code
-System.out.println("Enter state code:");
-String stateCode = scanner2.nextLine();
+          System.out.println("Enter state code:");
+          String stateCode = scanner2.nextLine();
 
 // Prompt user to enter country code
-System.out.println("Enter country code:");
-String countryCode = scanner2.nextLine();
+          System.out.println("Enter country code:");
+          String countryCode = scanner2.nextLine();
             desktopUI.displayWeatherByCity(cityName, stateCode, countryCode);
-         
         } else if (choice == 2) {
             // Fetch weather by latitude and longitude
             System.out.println("Enter latitude:");
@@ -142,21 +163,18 @@ String countryCode = scanner2.nextLine();
             System.out.println("Enter longitude:");
             double longitude = scanner.nextDouble();
             desktopUI.displayWeatherByCoordinates(latitude, longitude);
-            
-            
-        
         } else {
             System.out.println("Invalid choice. Please select 1 or 2.");
         }
-        desktopUI.displayPollutionData();
-        desktopUI.weatherService.generateAirQualityNotification();
-        int aqi = weatherService.getAirQualityIndex();
-        String airQualityStatus = weatherService.getAirQualityStatus(aqi);
-        System.out.println("Air Quality Status: " + airQualityStatus);
         //desktopUI.displaySunriseSunsetTime();
         desktopUI.displayFeelsLike();
         desktopUI.displayBasicInformation();
         desktopUI.displaySunriseSunsetTime();
+        desktopUI.getForecastData();
+        desktopUI.fetchAndDisplayTimestamp();
+        desktopUI.displayPollutionData();
+        desktopUI.displayAirQualityInformation();
+        desktopUI.displayBadWeather();
         // Close scanner
         scanner.close();
     }
