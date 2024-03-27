@@ -1,12 +1,14 @@
-# Overview
-The Weather App is a Java-based application designed to provide users with real-time weather information for multiple locations. It includes features such as adding locations using longitude and latitude or city/country names, displaying current weather conditions, showing basic information like "Feels like," minimum and maximum temperatures, sunrise and sunset times, weather forecast for 5 days, and more.
+## Folder Structure
 
-## Contributors
-- Hasan Yahya
-- Wasif Khan
-- Zain Aslam
-- Ahsan Ahmed
-- Hasnain Ali
+The workspace contains two folders by default, where:
 
-## Conclusion
-The Weather App aims to provide a user-friendly interface for accessing detailed weather information. Contributions from the open-source community are encouraged, and feedback is highly appreciated. Together, let's create a powerful and versatile weather application to meet the needs of users worldwide.
+- `src`: the folder to maintain sources
+- `lib`: the folder to maintain dependencies
+
+Meanwhile, the compiled output files will be generated in the `bin` folder by default.
+
+> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
+
+## Dependency Management
+
+The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
