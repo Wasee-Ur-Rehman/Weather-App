@@ -47,6 +47,7 @@ public class WeatherService
     private double latitude;
     private double longitude;
     private LocalDateTime timestamp;
+    
 
     public String fetchFiveDayForecast() 
     {
@@ -168,7 +169,7 @@ public class WeatherService
         JSONObject main = json.getJSONObject("main");
         double feelsLike = main.getDouble("feels_like");
 
-        return "Feels like: " + feelsLike + "°C";
+        return "Feels like: " + feelsLike + "°K";
     }
 
     public String fetchBasicInfo() {
@@ -280,17 +281,20 @@ public class WeatherService
         }
     }
     
-     public void generateAirQualityNotification()
-     {
+    public String generateAirQualityNotification()
+    {
         getAirPollutionData();
         JSONObject pollutionData = new JSONObject(pollutionResponse.body());
-
+        String notify="0";
         int aqi = pollutionData.getJSONArray("list").getJSONObject(0).getJSONObject("main").getInt("aqi");
         String airQualityStatus = getAirQualityStatus(aqi);
 
-        if (airQualityStatus.equals("Poor") || airQualityStatus.equals("Very Poor") || airQualityStatus.equals("Severe")) {
-            generateNotification("Air Quality Alert", "Air Quality is " + airQualityStatus + ". Please take necessary precautions.");
+        if (airQualityStatus.equals("Poor") || airQualityStatus.equals("Very Poor") || airQualityStatus.equals("Severe"))
+        {
+            notify=("1");
+            System.out.println ("Air Quality Alert, Air Quality is " + airQualityStatus + ". Please take necessary precautions.");
         }
+        return notify;
     }
 
     // Method to define air quality status based on AQI
@@ -329,8 +333,9 @@ public class WeatherService
     return aqi;
 }
 
-   public void getTempAndHum() 
+   public String getTempAndHum() 
    {
+       String status="0";
         try {
             // Parse JSON response to extract weather information
             JSONObject json = new JSONObject(weatherData);
@@ -340,6 +345,7 @@ public class WeatherService
 
             // Compare weather conditions with thresholds
             if (temperature <= TEMPERATURE_THRESHOLD_LOW || humidity >= HUMIDITY_THRESHOLD_HIGH) {
+                status="1";
                 generateNotification("Poor Weather Alert", "Weather conditions are poor. Please take necessary precautions.");
             }
             else
@@ -349,6 +355,7 @@ public class WeatherService
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        return status;
     }
 
     // Method to generate notifications
