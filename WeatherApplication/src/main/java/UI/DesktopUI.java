@@ -14,117 +14,130 @@ public class DesktopUI
 {
     private WeatherService weatherService;
 
-    public DesktopUI(WeatherService weatherService) {
+    public DesktopUI(WeatherService weatherService) 
+    {
         this.weatherService = weatherService;
     }
     
-    public void displayWeatherByCity(String cityName, String stateCode, String countryCode)
+    public String displayWeatherByCity(String cityName, String stateCode, String countryCode)
     {
     // Call the WeatherService method to fetch weather data by city
     String weatherData = weatherService.fetchWeatherDataByCity(cityName, stateCode, countryCode);
 
     // Display the fetched weather data
-    System.out.println("Weather Information for " + cityName + ":");
-    System.out.println(weatherData);
+    //System.out.println("Weather Information for " + cityName + ":");
+    //System.out.println(weatherData);
+    return weatherData;
 }
 
-    public void displayWeatherByCoordinates(double latitude, double longitude)
+    public String displayWeatherByCoordinates(double latitude, double longitude)
     {
     // Call the WeatherService method to fetch weather data by coordinates
     String weatherData = weatherService.fetchWeatherDataByCoordinates(latitude, longitude);
 
     // Display the fetched weather data
-    System.out.println("Weather Information for Latitude: " + latitude + ", Longitude: " + longitude + ":");
-    System.out.println(weatherData);
+   // System.out.println("Weather Information for Latitude: " + latitude + ", Longitude: " + longitude + ":");
+    //System.out.println(weatherData);
+    return weatherData;
 }
 
     // Method to display basic weather information
-    public void displayBasicInformation() {
+    public String displayBasicInformation() {
         String basicInfo = weatherService.fetchBasicInfo();
         System.out.println("\nBasic Weather Information:");
         System.out.println(basicInfo);
+        return basicInfo;
     }
 
     // Method to display sunrise and sunset time
-    public void displaySunriseSunsetTime() {
+    public String displaySunriseSunsetTime() {
         String sunriseSunset = weatherService.fetchSunriseSunset();
         System.out.println("\nSunrise and Sunset Time:");
         System.out.println(sunriseSunset);
+        return sunriseSunset;
     }
 
     // Method to display feels-like temperature
-    public void displayFeelsLike() 
+    public String displayFeelsLike() 
     {
         String feelsLike = weatherService.fetchFeelsLike();
         System.out.println("\nFeels Like Temperature:");
         System.out.println(feelsLike);
+        return feelsLike;
     }
     
-    public void getForecastData() 
+    public String getForecastData() 
     {
         String forecastData = weatherService.fetchFiveDayForecast();
         System.out.println("Forecast Data:\n" + forecastData);
+        return forecastData;
     }
     
-    public void fetchAndDisplayTimestamp() {
+    public String fetchAndDisplayTimestamp() {
         String timestamp = weatherService.fetchTimestamp();
         System.out.println("Timestamp: " + timestamp);
+        return timestamp;
     }
 
-    public void displayPollutionData() {
-        weatherService.getAirPollutionData();
-        String pollutionData = weatherService.parsePollutionData();
 
-        try {
-            // Parse the pollution data from JSON
-            JSONObject pollutionJson = new JSONObject(pollutionData);
-            JSONArray pollutantsArray = pollutionJson.getJSONArray("list");
+   public String displayPollutionDataTwo() {
+    weatherService.getAirPollutionData();
+    StringBuilder pollutionDataString = new StringBuilder();
 
-            // Print table headers
-            System.out.println("\nAir Pollution Data:");
-            System.out.println("--------------------------------------------------------------");
-            System.out.printf("| %-15s | %-5s | %-6s | %-6s | %-6s | %-6s | %-6s | %-6s | %-6s | %-6s |\n",
-                    "Pollutant", "AQI", "CO", "NO", "NO2", "O3", "SO2", "PM2.5", "PM10", "NH3");
-            System.out.println("--------------------------------------------------------------");
+    try {
+        // Parse the pollution data from JSON
+        JSONObject pollutionJson = new JSONObject(weatherService.parsePollutionData());
+        JSONArray pollutantsArray = pollutionJson.getJSONArray("list");
 
-            // Iterate over each pollutant and print its data
-            for (int i = 0; i < pollutantsArray.length(); i++) {
-                JSONObject pollutant = pollutantsArray.getJSONObject(i);
-                JSONObject main = pollutant.getJSONObject("main");
-                JSONObject components = pollutant.getJSONObject("components");
-                int aqi = main.getInt("aqi");
-                double co = components.getDouble("co");
-                double no = components.getDouble("no");
-                double no2 = components.getDouble("no2");
-                double o3 = components.getDouble("o3");
-                double so2 = components.getDouble("so2");
-                double pm25 = components.getDouble("pm2_5");
-                double pm10 = components.getDouble("pm10");
-                double nh3 = components.getDouble("nh3");
+        // Append the title
+        //pollutionDataString.append("\nAir Pollution Data:\n");
 
-                // Print pollutant data in table format
-                System.out.printf("| %-15s | %-5d | %-6.2f | %-6.2f | %-6.2f | %-6.2f | %-6.2f | %-6.2f | %-6.2f | %-6.2f |\n",
-                        "Pollutant", aqi, co, no, no2, o3, so2, pm25, pm10, nh3);
-            }
+        // Iterate over each pollutant and append its data
+        for (int i = 0; i < pollutantsArray.length(); i++) {
+            JSONObject pollutant = pollutantsArray.getJSONObject(i);
+            JSONObject components = pollutant.getJSONObject("components");
+            int aqi = pollutant.getJSONObject("main").getInt("aqi");
 
-            // Print table footer
-            System.out.println("--------------------------------------------------------------");
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Error parsing pollution data.");
+            // Append pollutant name and AQI
+            pollutionDataString.append("Carbon Monoxide (CO) : AQI ").append(aqi).append("\n");
+            pollutionDataString.append("Nitrogen Monoxide (NO) : ").append(components.getDouble("co")).append("\n");
+            pollutionDataString.append("Nitrogen Dioxide (NO2) : ").append(components.getDouble("no")).append("\n");
+            pollutionDataString.append("Ozone (O3) : ").append(components.getDouble("no2")).append("\n");
+            pollutionDataString.append("Sulfur Dioxide (SO2) : ").append(components.getDouble("o3")).append("\n");
+            pollutionDataString.append("(PM2.5) : ").append(components.getDouble("so2")).append("\n");
+            pollutionDataString.append("(PM10) : ").append(components.getDouble("pm2_5")).append("\n");
+            pollutionDataString.append("Ammonia (NH3) : ").append(components.getDouble("pm10")).append("\n");
+
+
         }
+    } catch (Exception e) {
+        e.printStackTrace();
+        pollutionDataString.append("Error parsing pollution data.");
     }
-     
-    public void displayAirQualityInformation() 
+
+    return pollutionDataString.toString();
+}
+
+
+    public String displayAirQualityInformation() 
       {
-        weatherService.generateAirQualityNotification();
+        
         int aqi = weatherService.getAirQualityIndex();
         String airQualityStatus = weatherService.getAirQualityStatus(aqi);
         System.out.println("Air Quality Status: " + airQualityStatus);
+        return airQualityStatus;
     }
-    public void displayBadWeather()
+    
+    public String getAQiMessage()
     {
-        weatherService.getTempAndHum();
+        String message= weatherService.generateAirQualityNotification();
+        return message;
+    }
+    public String displayBadWeather()
+    {
+        String status;
+        status=weatherService.getTempAndHum();
+        return status;
     }
       
    public static void main(String[] args) 
@@ -172,7 +185,7 @@ public class DesktopUI
         desktopUI.displaySunriseSunsetTime();
         desktopUI.getForecastData();
         desktopUI.fetchAndDisplayTimestamp();
-        desktopUI.displayPollutionData();
+        desktopUI.displayPollutionDataTwo();
         desktopUI.displayAirQualityInformation();
         desktopUI.displayBadWeather();
         // Close scanner
