@@ -1,0 +1,73 @@
+/**
+ * Fetches air pollution data for the given coordinates.
+ * @param latitude The latitude of the location.
+ * @param longitude The longitude of the location.
+ * @return A string containing the pollution data in JSON format.
+ */
+public String fetchPollutionDataByCoordinates(double latitude, double longitude) {
+    try {
+        // Construct the URL for the API call
+        String urlStr = String.format(POLLUTION_API_URL, latitude, longitude);
+        URL url = new URL(urlStr);
+
+        // Open connection to the URL
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+
+        // Read the response
+        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        StringBuilder response = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            response.append(line);
+        }
+        reader.close();
+        connection.disconnect();
+
+        return response.toString();
+    } catch (IOException e) {
+        e.printStackTrace();
+        return "Failed to fetch pollution data.";
+    }
+}
+public String fetchCurrentWeatherByCity(String cityName, String stateCode, String countryCode) {
+    // Get the coordinates of the city
+    String data = getCoordinatesFromCity(cityName, stateCode, countryCode);
+    parseCoordinates(data);
+    // Fetch weather data using the coordinates
+    return fetchWeatherDataByCoordinates(latitude, longitude);
+}
+
+public String fetchWeatherByTimestamp(String timestamp) {
+    try {
+        // Construct the URL for the API call
+        String urlStr = "https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=" + latitude + "&lon=" + longitude + "&dt=" + timestamp + "&appid=" + API_KEY;
+        URL url = new URL(urlStr);
+
+        // Open connection to the URL
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+
+        // Read the response
+        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        StringBuilder response = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            response.append(line);
+        }
+        reader.close();
+        connection.disconnect();
+
+        // Parse JSON response to extract weather information
+        JSONObject json = new JSONObject(response.toString());
+        JSONObject current = json.getJSONObject("current");
+        double temperature = current.getDouble("temp");
+        int humidity = current.getInt("humidity");
+        double windSpeed = current.getDouble("wind_speed");
+
+        return String.format("Temperature: %.2f K, Humidity: %d%%, Wind Speed: %.2f m/s", temperature, humidity, windSpeed);
+    } catch (IOException | JSONException e) {
+        e.printStackTrace();
+        return "Failed to fetch weather data.";
+    }
+}
