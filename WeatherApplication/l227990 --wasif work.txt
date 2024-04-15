@@ -1,0 +1,566 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import org.json.JSONObject;
+import org.json.JSONException;
+import org.json.JSONArray;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+
+public class WeatherService {
+
+    private static final String API_KEY = "6460ff0675fa856677b402c8b6681643";
+    private static final String GEOCODE_URL = "http://api.openweathermap.org/geo/1.0/direct";
+    private static final String FORECAST_API_URL = "https://api.openweathermap.org/data/2.5/forecast?lat=%s&lon=%s&appid=" + API_KEY;
+    private static final String CURRENT_WEATHER_BY_CITY_URL = "https://api.openweathermap.org/data/2.5/weather?q=%s&appid=" + API_KEY;
+    private static final String WEATHER_BY_TIMESTAMP_URL = "https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=%s&lon=%s&dt=%s&appid=" + API_KEY;
+
+    private List<String> fiveDayForecast; // Store weather data for five days
+    private double latitude;
+    private double longitude;
+
+    // Method to fetch five-day forecast data
+    public List<String> fetchFiveDayForecast() {
+        // Implementation remains the same
+    }
+
+    // Method to fetch current weather by city
+    public String fetchCurrentWeatherByCity(String cityName) {
+        try {
+            String encodedCityName = URLEncoder.encode(cityName, "UTF-8");
+            String urlStr = String.format(CURRENT_WEATHER_BY_CITY_URL, encodedCityName);
+            URL url = new URL(urlStr);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            StringBuilder response = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+            reader.close();
+            connection.disconnect();
+
+            // Parse the JSON response
+            JSONObject jsonResponse = new JSONObject(response.toString());
+            JSONObject main = jsonResponse.getJSONObject("main");
+            double temperature = main.getDouble("temp");
+            int humidity = main.getInt("humidity");
+            double windSpeed = jsonResponse.getJSONObject("wind").getDouble("speed");
+
+            return String.format("Temperature: %.2f K, Humidity: %d%%, Wind Speed: %.2f m/s", temperature, humidity, windSpeed);
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+            return "Failed to fetch current weather data.";
+        }
+    }
+
+    // Method to fetch weather by timestamp
+    public String fetchWeatherByTimestamp(String timestamp) {
+        try {
+            String urlStr = String.format(WEATHER_BY_TIMESTAMP_URL, latitude, longitude, timestamp);
+            URL url = new URL(urlStr);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            StringBuilder response = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+            reader.close();
+            connection.disconnect();
+
+            // Parse the JSON response
+            JSONObject jsonResponse = new JSONObject(response.toString());
+            JSONObject current = jsonResponse.getJSONObject("current");
+            double temperature = current.getDouble("temp");
+            int humidity = current.getInt("humidity");
+            double windSpeed = current.getDouble("wind_speed");
+
+            return String.format("Temperature: %.2f K, Humidity: %d%%, Wind Speed: %.2f m/s", temperature, humidity, windSpeed);
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+            return "Failed to fetch weather data by timestamp.";
+        }
+    }
+
+    // Method to generate air quality notifications
+    public String generateAirQualityNotification() {
+        try {
+            String urlStr = String.format(FORECAST_API_URL, latitude, longitude);
+            URL url = new URL(urlStr);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            StringBuilder response = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+            reader.close();
+            connection.disconnect();
+
+            // Parse the JSON response
+            JSONObject jsonResponse = new JSONObject(response.toString());
+            JSONArray forecastList = jsonResponse.getJSONArray("list");
+
+            StringBuilder forecastData = new StringBuilder();
+            String notify = "0";
+
+            for (int i = 0; i < forecastList.length(); i++) {
+                JSONObject forecastItem = forecastList.getJSONObject(i);
+                JSONObject main = forecastItem.getJSONObject("main");
+                int aqi = main.getInt("aqi");
+                String airQualityStatus = getAirQualityStatus(aqi);
+
+                if (airQualityStatus.equals("Poor") || airQualityStatus.equals("Very Poor") || airQualityStatus.equals("Severe")) {
+                    notify = "1";
+                    System.out.println("Air Quality Alert, Air Quality is " + airQualityStatus + ". Please take necessary precautions.");
+                }
+            }
+            return notify;
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+            return "Failed to generate air quality notification.";
+        }
+    }
+
+    // Method to define air quality status based on AQI
+    public String getAirQualityStatus(int aqi) {
+        // Implementation remains the same
+    }
+
+    // Method to convert temperature between different units (Celsius, Fahrenheit, Kelvin)
+public double convertTemperature(double temperature, String fromUnit, String toUnit) {
+    // Switch statement to handle conversion based on input units
+    switch (fromUnit.toLowerCase()) {
+        case "celsius":
+            switch (toUnit.toLowerCase()) {
+                case "fahrenheit":
+                    return (temperature * 9 / 5) + 32;
+                case "kelvin":
+                    return temperature + 273.15;
+                default:
+                    return temperature;
+            }
+        // Add cases for Fahrenheit and Kelvin to convert to other units
+        // Default case returns the temperature unchanged for the same unit
+        default:
+            return temperature;
+    }
+}
+
+// Method to convert wind speed between different units (m/s, km/h, mph)
+public double convertWindSpeed(double speed, String fromUnit, String toUnit) {
+    // Switch statement to handle conversion based on input units
+    switch (fromUnit.toLowerCase()) {
+        case "m/s":
+            switch (toUnit.toLowerCase()) {
+                case "km/h":
+                    return speed * 3.6;
+                case "mph":
+                    return speed * 2.23694;
+                default:
+                    return speed;
+            }
+        // Add cases for km/h and mph to convert to other units
+        // Default case returns the speed unchanged for the same unit
+        default:
+            return speed;
+    }
+}
+
+// Method to fetch URL for weather condition icon
+public String fetchWeatherIcon() {
+    try {
+        JSONObject json = new JSONObject(weatherData);
+        JSONArray weatherArray = json.getJSONArray("weather");
+        JSONObject weather = weatherArray.getJSONObject(0);
+        String iconCode = weather.getString("icon");
+        // Return URL to fetch the icon
+        return "https://openweathermap.org/img/w/" + iconCode + ".png";
+    } catch (JSONException e) {
+        e.printStackTrace();
+        return "Failed to fetch weather icon.";
+    }
+}
+
+// Method to fetch and display UV index information
+public String fetchUVIndex() {
+    try {
+        JSONObject json = new JSONObject(weatherData);
+        double uvIndex = json.getJSONObject("current").getDouble("uvi");
+        // Determine UV index category based on value
+        String uvIndexCategory;
+        if (uvIndex < 3) {
+            uvIndexCategory = "Low";
+        } else if (uvIndex < 6) {
+            uvIndexCategory = "Moderate";
+        } else if (uvIndex < 8) {
+            uvIndexCategory = "High";
+        } else if (uvIndex < 11) {
+            uvIndexCategory = "Very High";
+        } else {
+            uvIndexCategory = "Extreme";
+        }
+        // Return UV index information
+        return "UV Index: " + uvIndex + " (" + uvIndexCategory + ")";
+    } catch (JSONException e) {
+        e.printStackTrace();
+        return "Failed to fetch UV index.";
+    }
+}
+public String fetchWeatherDataByCoordinates(double latitude, double longitude)
+    {
+    try {
+        String urlStr = String.format(API_URL, latitude, longitude);
+        URL url = new URL(urlStr);
+
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+        StringBuilder response = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            response.append(line);
+        }
+        weatherData = response.toString();
+
+        reader.close();
+        connection.disconnect();
+
+        // Parse JSON response to extract basic weather information
+        JSONObject json = new JSONObject(response.toString());
+        JSONObject main = json.getJSONObject("main");
+        double temperature = main.getDouble("temp");
+        double minTemp = main.getDouble("temp_min");
+        double maxTemp = main.getDouble("temp_max");
+        int humidity = main.getInt("humidity");
+        double windSpeed = json.getJSONObject("wind").getDouble("speed");
+
+        // Construct basic weather information string
+        String basicInfo = String.format("Temperature: %.2f K, Min Temperature: %.2f K, Max Temperature: %.2f K, Humidity: %d%%, Wind Speed: %.2f m/s",
+                temperature, minTemp, maxTemp, humidity, windSpeed);
+        updateTimestamp();
+        return basicInfo;
+    } catch (IOException e) {
+        e.printStackTrace();
+        return "Failed to fetch weather data.";
+    }
+}
+
+
+    public String fetchWeatherDataByCity(String cityName, String stateCode, String countryCode) 
+    {
+        String data = getCoordinatesFromCity(cityName, stateCode, countryCode);
+        parseCoordinates(data);
+        return fetchWeatherDataByCoordinates(latitude, longitude);
+    }
+
+    public String fetchSunriseSunset() {
+    try {
+        // Parse JSON response to extract sunrise and sunset times
+        JSONObject json = new JSONObject(weatherData);
+        JSONObject sys = json.getJSONObject("sys");
+
+        // Check if the value associated with the "sunset" key is a string
+        if (sys.has("sunset") && !sys.isNull("sunset") && sys.get("sunset") instanceof String) {
+            String sunset = sys.getString("sunset");
+            return "Sunset: " + sunset;
+        } else {
+            return "Sunset time not available.";
+        }
+    } catch (JSONException e) {
+        e.printStackTrace();
+        return "Error fetching sunset time.";
+    }
+}
+
+    public String fetchFeelsLike() {
+        // Parse JSON response to extract feels-like temperature
+        JSONObject json = new JSONObject(weatherData);
+        JSONObject main = json.getJSONObject("main");
+        double feelsLike = main.getDouble("feels_like");
+
+        return "Feels like: " + feelsLike + "°K";
+    }
+
+    public String fetchBasicInfo() {
+        // Parse JSON response to extract basic weather information
+        JSONObject json = new JSONObject(weatherData);
+        JSONObject main = json.getJSONObject("main");
+        double temperature = main.getDouble("temp");
+        double humidity = main.getDouble("humidity");
+        double windSpeed = json.getJSONObject("wind").getDouble("speed");
+
+        return String.format("Temperature: %.2f°C, Humidity: %.2f%%, Wind Speed: %.2f m/s", temperature, humidity, windSpeed);
+    }
+    
+    private String getCoordinatesFromCity(String cityName, String stateCode, String countryCode) {
+        try {
+            String encodedCityName = URLEncoder.encode(cityName, "UTF-8");
+            String urlStr = String.format("%s?q=%s,%s,%s&limit=1&appid=%s", GEOCODE_URL, encodedCityName, stateCode, countryCode, API_KEY);
+            URL url = new URL(urlStr);
+
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+            StringBuilder response = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+
+            reader.close();
+            connection.disconnect();
+
+            return response.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "Failed to fetch coordinates.";
+        }
+    }
+    
+
+    private void parseCoordinates(String data) {
+    try {
+        JSONArray jsonArray = new JSONArray(data);
+        if (jsonArray.length() > 0) {
+            JSONObject location = jsonArray.getJSONObject(0);
+            latitude = location.getDouble("lat");
+            longitude = location.getDouble("lon");
+        } else {
+            // Handle the case when the JSON array is empty
+            System.err.println("No coordinates found in the JSON array.");
+        }
+    } catch (JSONException e) {
+        // Handle JSON parsing errors
+        e.printStackTrace();
+    }
+}
+   
+    private void updateTimestamp() {
+        timestamp = LocalDateTime.now();
+    }
+
+    public String fetchTimestamp() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return "Timestamp: " + timestamp.format(formatter);
+    }
+ 
+    public void getAirPollutionData()
+    {
+        String url = String.format(POLLUTION_API_URL, latitude, longitude);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .GET()
+                .build();
+
+        try {
+            pollutionResponse = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String parsePollutionData() 
+    {
+        if (pollutionResponse != null)
+        {
+            return pollutionResponse.body();
+        } else {
+            return "Pollution data not available.";
+        }
+    }
+
+    private String parseWeatherData(String data) 
+    {
+        try {
+            JSONObject json = new JSONObject(data);
+            JSONObject main = json.getJSONObject("main");
+            double temperature = main.getDouble("temp");
+            double minTemp = main.getDouble("temp_min");
+            double maxTemp = main.getDouble("temp_max");
+            int humidity = main.getInt("humidity");
+            double windSpeed = json.getJSONObject("wind").getDouble("speed");
+
+            return String.format("Temperature: %.2f K, Min Temperature: %.2f K, Max Temperature: %.2f K, Humidity: %d%%, Wind Speed: %.2f m/s",
+                    temperature, minTemp, maxTemp, humidity, windSpeed);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return "Error parsing weather data.";
+        }
+    }
+    
+    public String generateAirQualityNotification()
+    {
+        getAirPollutionData();
+        JSONObject pollutionData = new JSONObject(pollutionResponse.body());
+        String notify="0";
+        int aqi = pollutionData.getJSONArray("list").getJSONObject(0).getJSONObject("main").getInt("aqi");
+        String airQualityStatus = getAirQualityStatus(aqi);
+
+        if (airQualityStatus.equals("Poor") || airQualityStatus.equals("Very Poor") || airQualityStatus.equals("Severe"))
+        {
+            notify=("1");
+            System.out.println ("Air Quality Alert, Air Quality is " + airQualityStatus + ". Please take necessary precautions.");
+        }
+        return notify;
+    }
+
+    // Method to define air quality status based on AQI
+    public String getAirQualityStatus(int aqi) 
+    {
+        if (aqi <= AQI_THRESHOLD_MODERATE) {
+            return "Good";
+        } else if (aqi <= AQI_THRESHOLD_POOR) {
+            return "Moderate";
+        } else if (aqi <= AQI_THRESHOLD_VERY_POOR) {
+            return "Poor";
+        } else if (aqi <= AQI_THRESHOLD_SEVERE) {
+            return "Very Poor";
+        } else {
+            return "Severe";
+        }
+    }
+
+    // Method to generate notifications
+    public void generateNotification(String title, String message) {
+        // This method is a placeholder for actual notification implementation.
+        // You can implement notifications for various platforms (desktop, mobile, etc.)
+        System.out.println("Notification: " + title + " - " + message);
+    }
+
+    public int getAirQualityIndex() 
+    {
+    // Fetch air pollution data
+    getAirPollutionData();
+
+    // Parse the pollution data to get the AQI
+    JSONObject pollutionData = new JSONObject(pollutionResponse.body());
+    int aqi = pollutionData.getJSONArray("list").getJSONObject(0).getJSONObject("main").getInt("aqi");
+
+    // Return the AQI
+    return aqi;
+}
+
+   public String getTempAndHum() 
+   {
+       String status="0";
+        try {
+            // Parse JSON response to extract weather information
+            JSONObject json = new JSONObject(weatherData);
+            JSONObject main = json.getJSONObject("main");
+            double temperature = main.getDouble("temp");
+            double humidity = main.getDouble("humidity");
+
+            // Compare weather conditions with thresholds
+            if (temperature <= TEMPERATURE_THRESHOLD_LOW || humidity >= HUMIDITY_THRESHOLD_HIGH) {
+                status="1";
+                generateNotification("Poor Weather Alert", "Weather conditions are poor. Please take necessary precautions.");
+            }
+            else
+            {
+                generateNotification("Weather Is normal", "Chill out and Enjoy!");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return status;
+    }
+
+    // Method to generate notifications
+    private void notifyBadWeather(String title, String message) 
+    {
+        // This method is a placeholder for actual notification implementation.
+        // You can implement notifications for various platforms (desktop, mobile, etc.)
+        System.out.println("Notification: " + title + " - " + message);
+    }
+/**
+ * Fetches air pollution data for the given coordinates.
+ * @param latitude The latitude of the location.
+ * @param longitude The longitude of the location.
+ * @return A string containing the pollution data in JSON format.
+ */
+public String fetchPollutionDataByCoordinates(double latitude, double longitude) {
+    try {
+        // Construct the URL for the API call
+        String urlStr = String.format(POLLUTION_API_URL, latitude, longitude);
+        URL url = new URL(urlStr);
+
+        // Open connection to the URL
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+
+        // Read the response
+        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        StringBuilder response = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            response.append(line);
+        }
+        reader.close();
+        connection.disconnect();
+
+        return response.toString();
+    } catch (IOException e) {
+        e.printStackTrace();
+        return "Failed to fetch pollution data.";
+    }
+}
+public String fetchCurrentWeatherByCity(String cityName, String stateCode, String countryCode) {
+    // Get the coordinates of the city
+    String data = getCoordinatesFromCity(cityName, stateCode, countryCode);
+    parseCoordinates(data);
+    // Fetch weather data using the coordinates
+    return fetchWeatherDataByCoordinates(latitude, longitude);
+}
+
+public String fetchWeatherByTimestamp(String timestamp) {
+    try {
+        // Construct the URL for the API call
+        String urlStr = "https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=" + latitude + "&lon=" + longitude + "&dt=" + timestamp + "&appid=" + API_KEY;
+        URL url = new URL(urlStr);
+
+        // Open connection to the URL
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+
+        // Read the response
+        BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        StringBuilder response = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            response.append(line);
+        }
+        reader.close();
+        connection.disconnect();
+
+        // Parse JSON response to extract weather information
+        JSONObject json = new JSONObject(response.toString());
+        JSONObject current = json.getJSONObject("current");
+        double temperature = current.getDouble("temp");
+        int humidity = current.getInt("humidity");
+        double windSpeed = current.getDouble("wind_speed");
+
+        return String.format("Temperature: %.2f K, Humidity: %d%%, Wind Speed: %.2f m/s", temperature, humidity, windSpeed);
+    } catch (IOException | JSONException e) {
+        e.printStackTrace();
+        return "Failed to fetch weather data.";
+    }
+}
+}
