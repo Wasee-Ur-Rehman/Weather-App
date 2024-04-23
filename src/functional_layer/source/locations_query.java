@@ -23,12 +23,24 @@ import java.net.HttpURLConnection;*/
 import java.net.URL;
 import java.net.URLEncoder;
 
-class locations_query implements Location_Interfaces {
+public class locations_query implements Location_Interfaces {
 
     public boolean addLocation_Coordinates(String lati, String longi) {
         // String apiKey = config.API_Key.getAPIKey();
         String geoKey = config.API_Key.getGeoLocAPIKey();
         boolean flag = false;
+        // get locs and check if lat and lon already exists
+        location_save_interface dbl = new database_layer.textfile_module.source.location_save();
+        java.util.List<location_save_interface.Locations> locations = dbl.getLocations();
+        /*
+         * for (location_save_interface.Locations loc : locations) {
+         * if (loc.latitude.equals(lati) && loc.longitude.equals(longi)) {
+         * // print error
+         * System.out.println("Latitude and Longitude already exists.");
+         * return false;
+         * }
+         * }
+         */
         // API call to add location by coordinates.
         // https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API
         // key}
@@ -94,6 +106,17 @@ class locations_query implements Location_Interfaces {
                 String latitude = response.toString().split("lat\":")[1].split(",\"")[0];
                 String longitude = response.toString().split("lon\":")[1].split(",\"")[0];
 
+                // check for duplicates
+                String new_lat = latitude;
+                String new_lon = longitude;
+                for (location_save_interface.Locations loc : locations) {
+                    if (loc.latitude.equals(new_lat) && loc.longitude.equals(new_lon)) {
+                        // print error
+                        System.out.println("Latitude and Longitude already exist.");
+                        return false;
+                    }
+                }
+
                 // add the location to the Locations.txt file in next line
                 location_save_interface db_text_layer = new database_layer.textfile_module.source.location_save();
                 flag = db_text_layer.saveLocation_Names(city, country,
@@ -115,6 +138,21 @@ class locations_query implements Location_Interfaces {
         // String apiKey = config.API_Key.getAPIKey();
         String geoKey = config.API_Key.getGeoLocAPIKey();
         String encodedQuery = null;
+        // get all locs and check if it already exists
+        location_save_interface dbl = new database_layer.textfile_module.source.location_save();
+        java.util.List<location_save_interface.Locations> locations = dbl.getLocations();
+        boolean flag1 = true;
+        for (int i = 0; i < locations.size(); i++) {
+            if (locations.get(i).city.equals(city) && locations.get(i).country.equals(country)) {
+                // print error
+                System.out.println("Location (City and Country) already exists.");
+                flag1 = false;
+                break;
+            }
+        }
+        if (flag1 == false) {
+            return false;
+        }
         try {
             encodedQuery = URLEncoder.encode(city + ", " + country, "UTF-8");
         } catch (UnsupportedEncodingException e) {

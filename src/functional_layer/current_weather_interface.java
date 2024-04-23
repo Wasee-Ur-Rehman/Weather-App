@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface current_weather_interface {
 
-    class Current_Conditions {
+    public class Current_Conditions {
         public String lon;
         public String lat;
         public String id;
@@ -21,7 +21,6 @@ public interface current_weather_interface {
         public String wind_speed;
         public String wind_deg;
         public String gust;
-        public String rain_1hr;
         public String clouds_all;
         public String sunrise;
         public String sunset;

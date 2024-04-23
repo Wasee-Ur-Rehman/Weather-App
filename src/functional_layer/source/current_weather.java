@@ -10,13 +10,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.List;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.json.simple.JSONArray;
 
 public class current_weather implements current_weather_interface {
-    private static String extractValue(String input, String start, String end) {
-        int startIndex = input.indexOf(start) + start.length();
-        int endIndex = input.indexOf(end, startIndex);
-        return input.substring(startIndex, endIndex);
-    }
 
     public Current_Conditions getCurrentWeather(String lati, String longi) {
         String apiKey = config.API_Key.getAPIKey();
@@ -24,14 +23,16 @@ public class current_weather implements current_weather_interface {
         database_layer.textfile_module.source.current_conditions cc_db = new database_layer.textfile_module.source.current_conditions();
         cc_db.remove_prev_cache();
         List<Current_Conditions> temp_conditions = cc_db.return_current_conditions();
-
-        // check if the data is already in the cache
         boolean flag = false;
-        for (Current_Conditions temp : temp_conditions) {
-            if (temp.lat.equals(lati) && temp.lon.equals(longi)) {
-                cc = temp;
-                flag = true;
-                break;
+        if (temp_conditions != null && temp_conditions.size() > 0) {
+            // check if the data is already in the cache
+            flag = false;
+            for (Current_Conditions temp : temp_conditions) {
+                if (temp.lat.equals(lati) && temp.lon.equals(longi)) {
+                    cc = temp;
+                    flag = true;
+                    break;
+                }
             }
         }
 
@@ -62,29 +63,134 @@ public class current_weather implements current_weather_interface {
 
                 // Print to test response
                 // System.out.println(response.toString());
+                // System.exit(0);
 
                 String responseString = response.toString();
-                String lon = extractValue(responseString, "\"lon\":", ",");
-                String lat = extractValue(responseString, "\"lat\":", "}");
-                String id = extractValue(responseString, "\"id\":", ",");
-                String main = extractValue(responseString, "\"main\":\"", "\",");
-                String description = extractValue(responseString, "\"description\":\"", "\",");
-                String icon = extractValue(responseString, "\"icon\":\"", "\"}");
-                String temp = extractValue(responseString, "\"temp\":", ",");
-                String feels_like = extractValue(responseString, "\"feels_like\":", ",");
-                String temp_min = extractValue(responseString, "\"temp_min\":", ",");
-                String temp_max = extractValue(responseString, "\"temp_max\":", ",");
-                String pressure = extractValue(responseString, "\"pressure\":", ",");
-                String humidity = extractValue(responseString, "\"humidity\":", "}");
-                String visibility = extractValue(responseString, "\"visibility\":", ",");
-                String wind_speed = extractValue(responseString, "\"speed\":", ",");
-                String wind_deg = extractValue(responseString, "\"deg\":", ",");
-                String gust = extractValue(responseString, "\"gust\":", "}");
-                String rain_1hr = extractValue(responseString, "\"1h\":", "}");
-                String clouds_all = extractValue(responseString, "\"all\":", "}");
-                String sunrise = extractValue(responseString, "\"sunrise\":", ",");
-                String sunset = extractValue(responseString, "\"sunset\":", "}");
-                String timezone = extractValue(responseString, "\"timezone\":", ",");
+                String lon;
+                String lat;
+                String id;
+                String main;
+                String description;
+                String icon;
+                String temp;
+                String feels_like;
+                String temp_min;
+                String temp_max;
+                String pressure;
+                String humidity;
+                String visibility;
+                String wind_speed;
+                String wind_deg;
+                String gust;
+                String clouds_all;
+                String sunrise;
+                String sunset;
+                String timezone;
+
+                JSONParser parser;
+                JSONObject json;
+                // using json library to parse the response
+                parser = new JSONParser();
+                json = (JSONObject) parser.parse(responseString);
+                JSONObject coord = (JSONObject) json.get("coord");
+                lon = coord.get("lon").toString();
+                lat = coord.get("lat").toString();
+                JSONArray weather = (JSONArray) json.get("weather");
+                JSONObject weather0 = (JSONObject) weather.get(0);
+                if (weather0.get("id") == null) {
+                    id = "null";
+                } else {
+                    id = weather0.get("id").toString();
+                }
+                if (weather0.get("main") == null) {
+                    main = "null";
+                } else {
+                    main = weather0.get("main").toString();
+                }
+                if (weather0.get("description") == null) {
+                    description = "null";
+                } else {
+                    description = weather0.get("description").toString();
+                }
+                if (weather0.get("icon") == null) {
+                    icon = "null";
+                } else {
+                    icon = weather0.get("icon").toString();
+                }
+                JSONObject main_obj = (JSONObject) json.get("main");
+                if (main_obj.get("temp") == null) {
+                    temp = "null";
+                } else {
+                    temp = main_obj.get("temp").toString();
+                }
+                if (main_obj.get("feels_like") == null) {
+                    feels_like = "null";
+                } else {
+                    feels_like = main_obj.get("feels_like").toString();
+                }
+                if (main_obj.get("temp_min") == null) {
+                    temp_min = "null";
+                } else {
+                    temp_min = main_obj.get("temp_min").toString();
+                }
+                if (main_obj.get("temp_max") == null) {
+                    temp_max = "null";
+                } else {
+                    temp_max = main_obj.get("temp_max").toString();
+                }
+                if (main_obj.get("pressure") == null) {
+                    pressure = "null";
+                } else {
+                    pressure = main_obj.get("pressure").toString();
+                }
+                if (main_obj.get("humidity") == null) {
+                    humidity = "null";
+                } else {
+                    humidity = main_obj.get("humidity").toString();
+                }
+                if (json.get("visibility") == null) {
+                    visibility = "null";
+                } else {
+                    visibility = json.get("visibility").toString();
+                }
+                JSONObject wind = (JSONObject) json.get("wind");
+                if (wind.get("speed") == null) {
+                    wind_speed = "0";
+                } else {
+                    wind_speed = wind.get("speed").toString();
+                }
+                if (wind.get("deg") == null) {
+                    wind_deg = "0";
+                } else {
+                    wind_deg = wind.get("deg").toString();
+                }
+                if (wind.get("gust") == null) {
+                    gust = "0";
+                } else {
+                    gust = wind.get("gust").toString();
+                }
+                JSONObject clouds = (JSONObject) json.get("clouds");
+                if (clouds.get("all") == null) {
+                    clouds_all = "0";
+                } else {
+                    clouds_all = clouds.get("all").toString();
+                }
+                JSONObject sys = (JSONObject) json.get("sys");
+                if (sys.get("sunrise") == null) {
+                    sunrise = "null";
+                } else {
+                    sunrise = sys.get("sunrise").toString();
+                }
+                if (sys.get("sunset") == null) {
+                    sunset = "null";
+                } else {
+                    sunset = sys.get("sunset").toString();
+                }
+                if (json.get("timezone") == null) {
+                    timezone = "null";
+                } else {
+                    timezone = json.get("timezone").toString();
+                }
 
                 // get the current date, month and year
                 String dateday = new java.text.SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date());
@@ -110,7 +216,6 @@ public class current_weather implements current_weather_interface {
                 cc.wind_speed = wind_speed;
                 cc.wind_deg = wind_deg;
                 cc.gust = gust;
-                cc.rain_1hr = rain_1hr;
                 cc.clouds_all = clouds_all;
                 cc.sunrise = sunrise;
                 cc.sunset = sunset;
@@ -136,7 +241,6 @@ public class current_weather implements current_weather_interface {
                 // System.out.println("wind_speed: " + wind_speed);
                 // System.out.println("wind_deg: " + wind_deg);
                 // System.out.println("gust: " + gust);
-                // System.out.println("rain_1hr: " + rain_1hr);
                 // System.out.println("clouds_all: " + clouds_all);
                 // System.out.println("sunrise: " + sunrise);
                 // System.out.println("sunset: " + sunset);
@@ -154,9 +258,12 @@ public class current_weather implements current_weather_interface {
             } catch (IOException e) {
                 e.printStackTrace();
                 // Handle other exceptions here
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
 
             return cc;
+
         }
     }
 
@@ -167,7 +274,39 @@ public class current_weather implements current_weather_interface {
 
     // main for testing
     public static void main(String[] args) {
+        /*
+         * current_weather cw = new current_weather();
+         * functional_layer.current_weather_interface.Current_Conditions cc =
+         * cw.getCurrentWeather("33.6938118",
+         * "73.0651511");
+         * System.out.println("Current Weather Conditions:");
+         * // print in separate lines
+         * System.out.println("Longitude: " + cc.lon);
+         * System.out.println("Latitude: " + cc.lat);
+         * // System.out.println("ID: " + cc.id);
+         * System.out.println("Main: " + cc.main);
+         * System.out.println("Description: " + cc.description);
+         * // System.out.println("Icon: " + cc.icon);
+         * System.out.println("Temperature: " + cc.temp);
+         * System.out.println("Feels Like: " + cc.feels_like);
+         * System.out.println("Minimum Temperature: " + cc.temp_min);
+         * System.out.println("Maximum Temperature: " + cc.temp_max);
+         * System.out.println("Pressure: " + cc.pressure);
+         * System.out.println("Humidity: " + cc.humidity);
+         * System.out.println("Visibility: " + cc.visibility);
+         * System.out.println("Wind Speed: " + cc.wind_speed);
+         * System.out.println("Wind Degree: " + cc.wind_deg);
+         * System.out.println("Gust: " + cc.gust);
+         * System.out.println("Clouds: " + cc.clouds_all);
+         * System.out.println("Sunrise: " + cc.sunrise);
+         * System.out.println("Sunset: " + cc.sunset);
+         * // System.out.println("Timezone: " + cc.timezone);
+         * // System.out.println("Date: " + cc.date);
+         * // System.out.println("Month: " + cc.month);
+         * // System.out.println("Year: " + cc.year);
+         */
         current_weather cw = new current_weather();
-        cw.getCurrentWeather("35", "139");
+        cw.getCurrentWeather("31.5656822",
+                "74.3141829");
     }
 }

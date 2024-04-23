@@ -30,7 +30,6 @@ public class current_conditions implements current_conditions_interface {
         String wind_speed = cc.wind_speed;
         String wind_deg = cc.wind_deg;
         String gust = cc.gust;
-        String rain_1hr = cc.rain_1hr;
         String clouds_all = cc.clouds_all;
         String sunrise = cc.sunrise;
         String sunset = cc.sunset;
@@ -46,7 +45,7 @@ public class current_conditions implements current_conditions_interface {
                             true));
             writer.write(lon + "," + lat + "," + id + "," + main + "," + description + "," + icon + "," + temp + ","
                     + feels_like + "," + temp_min + "," + temp_max + "," + pressure + "," + humidity + "," + visibility
-                    + "," + wind_speed + "," + wind_deg + "," + gust + "," + rain_1hr + "," + clouds_all + "," + sunrise
+                    + "," + wind_speed + "," + wind_deg + "," + gust + "," + clouds_all + "," + sunrise
                     + "," + sunset + "," + timezone + "," + date + "," + month + "," + year);
             writer.newLine();
             writer.close();
@@ -89,14 +88,13 @@ public class current_conditions implements current_conditions_interface {
                     cc.wind_speed = data[13];
                     cc.wind_deg = data[14];
                     cc.gust = data[15];
-                    cc.rain_1hr = data[16];
-                    cc.clouds_all = data[17];
-                    cc.sunrise = data[18];
-                    cc.sunset = data[19];
-                    cc.timezone = data[20];
-                    cc.date = data[21];
-                    cc.month = data[22];
-                    cc.year = data[23];
+                    cc.clouds_all = data[16];
+                    cc.sunrise = data[17];
+                    cc.sunset = data[18];
+                    cc.timezone = data[19];
+                    cc.date = data[20];
+                    cc.month = data[21];
+                    cc.year = data[22];
 
                     cc_list.add(cc);
                 }
@@ -110,7 +108,7 @@ public class current_conditions implements current_conditions_interface {
 
     public void remove_prev_cache() {
         List<Current_Conditions> cc_list = return_current_conditions();
-        if (cc_list.size() == 0 || cc_list == null) {
+        if (cc_list == null || cc_list.size() == 0) {
             return;
         }
         // remove all dates data from cc_list
