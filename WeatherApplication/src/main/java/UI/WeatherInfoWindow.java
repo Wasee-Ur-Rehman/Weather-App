@@ -208,6 +208,7 @@ System.out.println("Longitude: " + longitude);
         focaastPanelBtn = new javax.swing.JButton();
         Timestamplabel = new javax.swing.JLabel();
         apptitle = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Weather Details");
@@ -219,163 +220,124 @@ System.out.println("Longitude: " + longitude);
 
         MainCard.setBackground(java.awt.Color.lightGray);
         MainCard.setPreferredSize(new java.awt.Dimension(950, 650));
+        MainCard.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        FeelLikeLabel.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
+        FeelLikeLabel.setFont(new java.awt.Font("Century Gothic", 1, 13)); // NOI18N
         FeelLikeLabel.setForeground(new java.awt.Color(0, 0, 0));
         FeelLikeLabel.setText("Feels Like:");
+        MainCard.add(FeelLikeLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(52, 253, -1, -1));
 
-        CurrentnfoLabel.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
+        CurrentnfoLabel.setFont(new java.awt.Font("Century Gothic", 1, 12)); // NOI18N
         CurrentnfoLabel.setForeground(new java.awt.Color(0, 0, 0));
         CurrentnfoLabel.setText("Current Weather Information:");
+        MainCard.add(CurrentnfoLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(47, 129, -1, -1));
 
-        BasicInfoLabel.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
+        BasicInfoLabel.setFont(new java.awt.Font("Century Gothic", 1, 13)); // NOI18N
         BasicInfoLabel.setForeground(new java.awt.Color(0, 0, 0));
         BasicInfoLabel.setText("Basic Information:");
+        MainCard.add(BasicInfoLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(52, 188, -1, -1));
 
-        SunTimingLabel.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
+        SunTimingLabel.setFont(new java.awt.Font("Century Gothic", 1, 13)); // NOI18N
         SunTimingLabel.setForeground(new java.awt.Color(0, 0, 0));
         SunTimingLabel.setText("Sun Rise and Sun Set Time:");
+        MainCard.add(SunTimingLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(52, 312, -1, -1));
 
         CurrentInfoTB.setEditable(false);
         CurrentInfoTB.setBackground(new java.awt.Color(255, 255, 255));
-        CurrentInfoTB.setFont(new java.awt.Font("Franklin Gothic Demi", 0, 12)); // NOI18N
-        CurrentInfoTB.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 153, 255), 3, true));
+        CurrentInfoTB.setFont(new java.awt.Font("Century Gothic", 0, 11)); // NOI18N
+        CurrentInfoTB.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 255, 255), 3, true));
         CurrentInfoTB.setFocusable(false);
+        MainCard.add(CurrentInfoTB, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 120, 490, 41));
 
         FeelsLikeTB.setEditable(false);
         FeelsLikeTB.setBackground(new java.awt.Color(255, 255, 255));
-        FeelsLikeTB.setFont(new java.awt.Font("Franklin Gothic Demi", 0, 12)); // NOI18N
-        FeelsLikeTB.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 153, 255), 3, true));
+        FeelsLikeTB.setFont(new java.awt.Font("Century Gothic", 0, 11)); // NOI18N
+        FeelsLikeTB.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 255, 255), 3, true));
         FeelsLikeTB.setFocusable(false);
+        FeelsLikeTB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                FeelsLikeTBActionPerformed(evt);
+            }
+        });
+        MainCard.add(FeelsLikeTB, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 240, 490, 41));
 
         SunTimingTB.setEditable(false);
         SunTimingTB.setBackground(new java.awt.Color(255, 255, 255));
-        SunTimingTB.setFont(new java.awt.Font("Franklin Gothic Demi", 0, 12)); // NOI18N
-        SunTimingTB.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 153, 255), 3, true));
+        SunTimingTB.setFont(new java.awt.Font("Century Gothic", 0, 11)); // NOI18N
+        SunTimingTB.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 255, 255), 3, true));
         SunTimingTB.setFocusable(false);
+        SunTimingTB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SunTimingTBActionPerformed(evt);
+            }
+        });
+        MainCard.add(SunTimingTB, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 300, 490, 41));
 
         BasicInfoTB.setEditable(false);
         BasicInfoTB.setBackground(new java.awt.Color(255, 255, 255));
-        BasicInfoTB.setFont(new java.awt.Font("Franklin Gothic Demi", 0, 12)); // NOI18N
-        BasicInfoTB.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 153, 255), 3, true));
+        BasicInfoTB.setFont(new java.awt.Font("Century Gothic", 0, 11)); // NOI18N
+        BasicInfoTB.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 255, 255), 3, true));
         BasicInfoTB.setFocusable(false);
+        BasicInfoTB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BasicInfoTBActionPerformed(evt);
+            }
+        });
+        MainCard.add(BasicInfoTB, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 180, 490, 41));
 
-        PollutingGasesLabel.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
+        PollutingGasesLabel.setFont(new java.awt.Font("Century Gothic", 1, 13)); // NOI18N
         PollutingGasesLabel.setForeground(new java.awt.Color(0, 0, 0));
         PollutingGasesLabel.setText("Air  Polluting  Gases Data:");
+        MainCard.add(PollutingGasesLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(53, 371, -1, -1));
 
         PollutingDataTb.setBackground(new java.awt.Color(255, 255, 255));
         PollutingDataTb.setColumns(20);
-        PollutingDataTb.setFont(new java.awt.Font("Franklin Gothic Demi", 0, 12)); // NOI18N
+        PollutingDataTb.setFont(new java.awt.Font("Century Gothic", 0, 11)); // NOI18N
         PollutingDataTb.setRows(5);
-        PollutingDataTb.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 153, 255), 3, true));
+        PollutingDataTb.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 255, 255), 3, true));
         PollutingDataTb.setFocusable(false);
         jScrollPane1.setViewportView(PollutingDataTb);
 
-        AirQualityLabel.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
+        MainCard.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 370, 490, 131));
+
+        AirQualityLabel.setFont(new java.awt.Font("Century Gothic", 1, 13)); // NOI18N
         AirQualityLabel.setForeground(new java.awt.Color(0, 0, 0));
         AirQualityLabel.setText("Air Quality Status:");
+        MainCard.add(AirQualityLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(53, 531, -1, -1));
 
         AirQualityTB.setEditable(false);
         AirQualityTB.setBackground(new java.awt.Color(255, 255, 255));
-        AirQualityTB.setFont(new java.awt.Font("Franklin Gothic Demi", 0, 12)); // NOI18N
-        AirQualityTB.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 153, 255), 3, true));
+        AirQualityTB.setFont(new java.awt.Font("Century Gothic", 0, 11)); // NOI18N
+        AirQualityTB.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 255, 255), 3, true));
         AirQualityTB.setFocusable(false);
+        MainCard.add(AirQualityTB, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 520, 490, 41));
 
-        focaastPanelBtn.setBackground(new java.awt.Color(255, 102, 102));
+        focaastPanelBtn.setFont(new java.awt.Font("Century Gothic", 1, 13)); // NOI18N
         focaastPanelBtn.setText("View Five Day Focast for this Location");
+        focaastPanelBtn.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
         focaastPanelBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 focaastPanelBtnActionPerformed(evt);
             }
         });
+        MainCard.add(focaastPanelBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 590, 360, 40));
 
-        Timestamplabel.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
+        Timestamplabel.setFont(new java.awt.Font("Century Gothic", 1, 13)); // NOI18N
         Timestamplabel.setForeground(new java.awt.Color(0, 0, 0));
         Timestamplabel.setText("Timestamp");
+        MainCard.add(Timestamplabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 600, -1, -1));
 
         apptitle.setBackground(new java.awt.Color(51, 0, 51));
-        apptitle.setFont(new java.awt.Font("Rockwell Extra Bold", 0, 20)); // NOI18N
+        apptitle.setFont(new java.awt.Font("Century Gothic", 1, 48)); // NOI18N
         apptitle.setForeground(new java.awt.Color(51, 0, 51));
-        apptitle.setText("At a Glance Weather Application");
+        apptitle.setText("SkyCast");
+        MainCard.add(apptitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 40, 332, 47));
 
-        javax.swing.GroupLayout MainCardLayout = new javax.swing.GroupLayout(MainCard);
-        MainCard.setLayout(MainCardLayout);
-        MainCardLayout.setHorizontalGroup(
-            MainCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(MainCardLayout.createSequentialGroup()
-                .addGap(52, 52, 52)
-                .addGroup(MainCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(BasicInfoLabel)
-                    .addComponent(CurrentnfoLabel)
-                    .addComponent(FeelLikeLabel)
-                    .addComponent(SunTimingLabel)
-                    .addGroup(MainCardLayout.createSequentialGroup()
-                        .addGap(1, 1, 1)
-                        .addGroup(MainCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(AirQualityLabel)
-                            .addComponent(PollutingGasesLabel))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(MainCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(MainCardLayout.createSequentialGroup()
-                        .addComponent(focaastPanelBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 261, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(Timestamplabel))
-                    .addComponent(FeelsLikeTB)
-                    .addComponent(CurrentInfoTB)
-                    .addComponent(BasicInfoTB)
-                    .addComponent(SunTimingTB)
-                    .addComponent(jScrollPane1)
-                    .addComponent(AirQualityTB)
-                    .addComponent(apptitle, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(317, Short.MAX_VALUE))
-        );
-        MainCardLayout.setVerticalGroup(
-            MainCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(MainCardLayout.createSequentialGroup()
-                .addGap(32, 32, 32)
-                .addComponent(apptitle, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(39, 39, 39)
-                .addGroup(MainCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(CurrentInfoTB, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(CurrentnfoLabel))
-                .addGap(18, 18, 18)
-                .addGroup(MainCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(BasicInfoLabel)
-                    .addComponent(BasicInfoTB, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(24, 24, 24)
-                .addGroup(MainCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(FeelLikeLabel)
-                    .addComponent(FeelsLikeTB, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(MainCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(SunTimingLabel)
-                    .addComponent(SunTimingTB, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(29, 29, 29)
-                .addGroup(MainCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(PollutingGasesLabel)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(MainCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(AirQualityTB, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(AirQualityLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
-                .addGroup(MainCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(focaastPanelBtn)
-                    .addComponent(Timestamplabel))
-                .addGap(25, 25, 25))
-        );
+        jLabel3.setIcon(new javax.swing.ImageIcon("C:\\Users\\it\\Documents\\NetBeansProjects\\WeatherApplication\\src\\main\\java\\anime-style-clouds.jpg")); // NOI18N
+        jLabel3.setText("jLabel3");
+        MainCard.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 970, 650));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(MainCard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(MainCard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+        getContentPane().add(MainCard, java.awt.BorderLayout.CENTER);
 
         pack();
         setLocationRelativeTo(null);
@@ -389,6 +351,18 @@ System.out.println("Longitude: " + longitude);
     private void formComponentAdded(java.awt.event.ContainerEvent evt) {                                    
         // TODO add your handling code here:
     }                                   
+
+    private void FeelsLikeTBActionPerformed(java.awt.event.ActionEvent evt) {                                            
+        // TODO add your handling code here:
+    }                                           
+
+    private void BasicInfoTBActionPerformed(java.awt.event.ActionEvent evt) {                                            
+        // TODO add your handling code here:
+    }                                           
+
+    private void SunTimingTBActionPerformed(java.awt.event.ActionEvent evt) {                                            
+        // TODO add your handling code here:
+    }                                           
 
     /**
      * @param args the command line arguments
@@ -452,6 +426,7 @@ System.out.println("Longitude: " + longitude);
     private javax.swing.JLabel Timestamplabel;
     private javax.swing.JLabel apptitle;
     private javax.swing.JButton focaastPanelBtn;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration                   
 }
