@@ -8,13 +8,19 @@ class Locations {
     public String country_code;
     public String latitude;
     public String longitude;
+    public String Day;
+    public String Month;
+    public String Year;
+    public String Hour;
+    public String Minutes;
 }
 
 public interface Location_Interfaces {
+
     // lati: latitude, longi: longitude which are parameters in API call.
-    public boolean addLocation_Coordinates(String lati, String longi);
+    public abstract boolean addLocation_Coordinates(String lati, String longi, String db_type);
 
-    public boolean addLocation_Names(String city, String country);
+    public abstract boolean addLocation_Names(String city, String country, String db_type);
 
-    public java.util.List<location_save_interface.Locations> displayLocs();
+    public abstract java.util.List<location_save_interface.Locations> displayLocs(String db_type);
 }

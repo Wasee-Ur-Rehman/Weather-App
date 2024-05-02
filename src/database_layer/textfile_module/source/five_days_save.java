@@ -5,14 +5,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 
 import database_layer.textfile_module.five_days_interface_save;
 import functional_layer.five_days_forcast_interface.five_days_data;
 import functional_layer.five_days_forcast_interface.five_days_struct;
-import functional_layer.five_days_forcast_interface;
 
 import java.util.List;
 
@@ -24,6 +20,8 @@ public class five_days_save implements five_days_interface_save {
         data_to_be_inserted += fdd.date + ",";
         data_to_be_inserted += fdd.month + ",";
         data_to_be_inserted += fdd.year + ",";
+        data_to_be_inserted += fdd.hour + ",";
+        data_to_be_inserted += fdd.minutes + ",";
         data_to_be_inserted += fdd.lat + ",";
         data_to_be_inserted += fdd.lon + ","; // all data outside list
         // adding list data for all lists
@@ -50,7 +48,7 @@ public class five_days_save implements five_days_interface_save {
         try {
             BufferedWriter writer = new BufferedWriter(
                     new FileWriter(
-                            "assets\\\\text_database\\\\Five_Days.txt",
+                            "databases\\\\text_database\\\\Five_Days.txt",
                             true));
             writer.write(data_to_be_inserted);
             writer.newLine();
@@ -77,9 +75,10 @@ public class five_days_save implements five_days_interface_save {
         try {
             BufferedReader reader = new BufferedReader(
                     new FileReader(
-                            "assets\\\\text_database\\\\Five_Days.txt"));
+                            "databases\\\\text_database\\\\Five_Days.txt"));
             String line = reader.readLine();
-            while (line != null) {
+            // five_days_struct fdd_struct = null;
+            while (line != null && line.length() > 0) {
                 String[] data = line.split(",");
                 five_days_data fdd_temp = new five_days_data();
                 fdd_temp.date = data[0];
@@ -87,7 +86,10 @@ public class five_days_save implements five_days_interface_save {
                 fdd_temp.year = data[2];
                 fdd_temp.lat = data[3];
                 fdd_temp.lon = data[4];
-                for (int i = 5; i < data.length; i += 18) {
+                fdd_temp.hour = data[5];
+                fdd_temp.minutes = data[6];
+                fdd_temp.list = new java.util.ArrayList<five_days_struct>();
+                for (int i = 7; i < data.length; i += 17) {
                     // List<five_days_struct> list;
                     five_days_struct fdd_struct = new five_days_struct();
                     fdd_struct.dt = data[i];
@@ -110,6 +112,8 @@ public class five_days_save implements five_days_interface_save {
                     fdd_temp.list.add(fdd_struct);
                 }
                 fdd.add(fdd_temp);
+                // print fdd size
+                System.out.println("fdd size: " + fdd.size());
                 line = reader.readLine();
             }
             reader.close();
@@ -127,30 +131,20 @@ public class five_days_save implements five_days_interface_save {
         int currentmonth = java.time.LocalDate.now().getMonthValue();
         int currentyear = java.time.LocalDate.now().getYear();
         // remove all data with date less than current date
-        for (int i = 0; i < fdd.size(); i++) {
+        for (int i = fdd.size() - 1; i >= 0; i--) {
             int date = Integer.parseInt(fdd.get(i).date);
             int month = Integer.parseInt(fdd.get(i).month);
             int year = Integer.parseInt(fdd.get(i).year);
-            if (year < currentyear) {
+            if (year < currentyear || (year == currentyear
+                    && (month < currentmonth || (month == currentmonth && date < currentdate)))) {
                 fdd.remove(i);
-                i--;
-            } else if (year == currentyear) {
-                if (month < currentmonth) {
-                    fdd.remove(i);
-                    i--;
-                } else if (month == currentmonth) {
-                    if (date < currentdate) {
-                        fdd.remove(i);
-                        i--;
-                    }
-                }
             }
         }
         // save the new data but clear the file first
         try {
             BufferedWriter writer = new BufferedWriter(
                     new FileWriter(
-                            "assets\\\\text_database\\\\Five_Days.txt"));
+                            "databases\\\\text_database\\\\Five_Days.txt"));
             writer.write("");
             writer.close();
         } catch (IOException e) {
@@ -161,6 +155,40 @@ public class five_days_save implements five_days_interface_save {
 
     // main just for testing
     public static void main(String[] args) {
-        // five_days_save fdd = new five_days_save();
+        five_days_save fdd = new five_days_save();
+        // get save data and print it
+        List<five_days_data> fdd_data = fdd.read_Five_Days();
+        // print sie of list
+        System.out.println("list data size: " + fdd_data.size());
+        for (int i = 0; i < fdd_data.size(); i++) {
+            five_days_data current_list = fdd_data.get(i);
+            System.out.println(current_list.date);
+            System.out.println(current_list.month);
+            System.out.println(current_list.year);
+            System.out.println(current_list.lat);
+            System.out.println(current_list.lon);
+            // print size of list
+            System.out.println("list size:" + current_list.list.size());
+            for (int j = 0; j < current_list.list.size(); j++) {
+                five_days_struct current_struct = current_list.list.get(j);
+                System.out.println(current_struct.dt);
+                System.out.println(current_struct.temp);
+                System.out.println(current_struct.feels_like);
+                System.out.println(current_struct.temp_min);
+                System.out.println(current_struct.temp_max);
+                System.out.println(current_struct.pressure);
+                System.out.println(current_struct.humidity);
+                System.out.println(current_struct.weather);
+                System.out.println(current_struct.icon);
+                System.out.println(current_struct.visibility);
+                System.out.println(current_struct.wind_speed);
+                System.out.println(current_struct.wind_deg);
+                System.out.println(current_struct.gust);
+                System.out.println(current_struct.clouds_all);
+                System.out.println(current_struct.sunrise);
+                System.out.println(current_struct.sunset);
+                System.out.println(current_struct.dt_text);
+            }
+        }
     }
 }
