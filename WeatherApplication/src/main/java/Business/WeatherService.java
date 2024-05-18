@@ -26,7 +26,7 @@ import java.net.URI;
 
 public class WeatherService 
 {
-    private static final String API_KEY = "6460ff0675fa856677b402c8b6681643";
+    private static final String API_KEY = "----";
     private static final String GEOCODE_URL = "http://api.openweathermap.org/geo/1.0/direct";
     private static final String API_URL = "https://api.openweathermap.org/data/2.5/weather?lat=%s&lon=%s&appid=" + API_KEY;
     private static final String FORECAST_API_URL = "https://api.openweathermap.org/data/2.5/forecast?lat=%s&lon=%s&appid=" + API_KEY;
